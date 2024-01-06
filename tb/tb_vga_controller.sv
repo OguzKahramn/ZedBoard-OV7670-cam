@@ -7,7 +7,7 @@ module tb_vga_controller();
   reg           CLK_I             ;
   reg           RST_N             ;
   reg           ENABLE_I          ;
-  reg [11:0]    PXL_DATA          ;
+  wire [11:0]    PXL_DATA          ;
 
 
   wire [3:0]    RED_O             ;
@@ -26,18 +26,18 @@ module tb_vga_controller();
     CLK_I            <= 0         ;
     RST_N            <= 0         ;
     ENABLE_I         <= 0         ;
-    PXL_DATA         <= 0         ;
+//    PXL_DATA         <= 0         ;
     #(T_25 * 10)                  ;
     RST_N            <= 1         ;
     #(T_25 * 10)                  ;
     ENABLE_I         <= 1         ;
   end
 
-  always @(posedge CLK_I) begin
-    if(ENABLE_O)begin
-      PXL_DATA       <= $random   ;
-    end
-  end
+  // always @(posedge CLK_I) begin
+  //   if(ENABLE_O)begin
+  //     PXL_DATA       <= $random   ;
+  //   end
+  // end
 
   vga_controller  DUTO(
     .CLK_25_I     ( CLK_I    ),   // 25 Mhz input clock
@@ -52,6 +52,14 @@ module tb_vga_controller();
     .VSYNC_O      ( VSYNC_O  ),   // Vertical synchronization
     .VIDEO_EN_O   ( ENABLE_O ),   // Display pixel time 
     .ADDRESS_O    ( ADDRESS_O)    // Read video pixel from BRAM
+  );
+
+  pixel_provider pixel_provider_0(
+    .CLK_25_I     ( CLK_I    ),   // 25 Mhz input clock
+    .RST_N_I      ( RST_N    ),   // Active-low reset
+    .ENABLE_I     ( ENABLE_O ),   // Start the give data
+
+    .PIXEL_OUT_O   (PXL_DATA)  // 12 bit rgb data 444 
   );
 
 
