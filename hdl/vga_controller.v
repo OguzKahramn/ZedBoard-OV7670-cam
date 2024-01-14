@@ -32,7 +32,7 @@ module vga_controller(
   output           HSYNC_O     ,   // Horizontal synchronization 
   output           VSYNC_O     ,   // Vertical synchronization
   output           VIDEO_EN_O  ,   // Display pixel time 
-  output  [15:0]   ADDRESS_O       // Read video pixel from BRAM
+  output  [14:0]   ADDRESS_O       // Read video pixel from BRAM
   );
 
   reg  [11:0]      hsync_cnt_r         ; // horizontal synchronization counter 
@@ -41,7 +41,7 @@ module vga_controller(
   reg              vsync_r             ; // vsync signal
   reg              count_en_pre_r      ; // the latch of enable signal 
   reg  [1:0]       vga_state_r         ; // vga state machine
-  reg  [15:0]      bram_addr_cnt_r     ; // bram address counter
+  reg  [14:0]      bram_addr_cnt_r     ; // bram address counter
 
   wire             count_en_w          ;
   wire             hsync_active_w      ;
@@ -125,14 +125,14 @@ module vga_controller(
 
   always @(posedge CLK_25_I) begin
     if(!RST_N_I)begin
-      bram_addr_cnt_r        <= 16'd0                 ;
+      bram_addr_cnt_r        <= 15'd0                 ;
     end
     else begin
       if(video_active_w)begin
-        bram_addr_cnt_r      <= bram_addr_cnt_r + 16'd1;
+        bram_addr_cnt_r      <= bram_addr_cnt_r + 15'd1;
       end
-      if(bram_addr_cnt_r == MAX_ADDRESS_C - 16'd1)begin
-        bram_addr_cnt_r      <= 16'd0;
+      if(bram_addr_cnt_r == MAX_ADDRESS_C - 15'd1)begin
+        bram_addr_cnt_r      <= 15'd0;
       end
     end
   end
